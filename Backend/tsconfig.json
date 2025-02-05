@@ -1,0 +1,32 @@
+{
+  "compilerOptions": {
+    "typeRoots": ["./node_modules/@types", "./types"],
+    "esModuleInterop": true,
+    "moduleResolution": "node",
+    "module": "commonjs",
+    "target": "es6",
+    "outDir": "./dist",
+    "resolveJsonModule": true,
+    "strict": true,
+
+    "incremental": true,
+    "tsBuildInfoFile": "./dist/.tsbuildinfo",
+    "skipLibCheck": true,
+    "sourceMap": false,
+    "noEmit": false,
+    "baseUrl": "./",
+    "paths": {
+      "@controllers/*": ["controllers/*"],
+      "@models/*": ["models/*"],
+      "@routes/*": ["routes/*"],
+      "@types/*": ["types/*"]
+    },
+    "forceConsistentCasingInFileNames": true,
+
+    "experimentalDecorators": true, 
+    "emitDecoratorMetadata": true,
+    "skipDefaultLibCheck": true
+  },
+  "include": ["./**/*.ts"],
+  "exclude": ["node_modules", "dist"]
+}
