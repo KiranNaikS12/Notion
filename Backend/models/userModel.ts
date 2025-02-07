@@ -8,8 +8,8 @@ const userSchema = new Schema<IUser>({
     email: {type: String, required: true},
     dob: {type: String, required: true},
     password: {type: String, required: true},
-    identity: {type: String, required: true},
-    intrested: {type: [String], required: true}
+    role: {type: String, required: true},
+    interested: {type: [String], required: true, default:[]}
 })
 
 const userModel = mongoose.model<IUser>('User', userSchema);

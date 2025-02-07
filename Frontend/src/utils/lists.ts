@@ -1,7 +1,7 @@
 
 export const rolesList = ["Student", "Teacher", "Programmer", "Journalist", "Content Writer", "Creator", "Other"];
 
-export const interestsList = [
+export const interestsList: string[] = [
     "Technology", 
     "Science", 
     "Health & Wellness", 

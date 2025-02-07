@@ -1,11 +1,25 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import HomeHeader from '../components/HomeHeader';
 import { Button } from '@heroui/react';
 import ArticleCard from '../components/ArticleCard';
 import { Search } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { useSelector } from 'react-redux';
+import { RootState } from '../redux/store/rootReducer';
 
 
 const LandingPage: React.FC = () => {
+
+    const navigate = useNavigate();
+    const { userInfo } = useSelector((state:RootState) => state.user)
+
+    useEffect(() => {
+        if (userInfo) {
+            console.log('isAuthenticated')
+            navigate("/home", { replace: true })
+        }
+    }, [userInfo, navigate])
+
     return (
         <div>
             <HomeHeader />
@@ -67,32 +81,32 @@ const LandingPage: React.FC = () => {
                         <h1 className='font-semibold text-md'>Trending Categories:</h1>
                         <div className='flex flex-wrap gap-3'>
                             <Button variant='solid' radius='sm' className='px-4 w-fit'>
-                                Programming 
-                            </Button>  
-                            <Button variant='solid' radius='sm' className='px-4 w-fit'>
-                                Science 
+                                Programming
                             </Button>
                             <Button variant='solid' radius='sm' className='px-4 w-fit'>
-                                Sports 
-                            </Button>  
-                            <Button variant='solid' radius='sm' className='px-4 w-fit'>
-                                Technology 
-                            </Button>  
-                            <Button variant='solid' radius='sm' className='px-4 w-fit'>
-                                Arts 
-                            </Button> 
-                            <Button variant='solid' radius='sm' className='px-4 w-fit'>
-                                Health 
+                                Science
                             </Button>
                             <Button variant='solid' radius='sm' className='px-4 w-fit'>
-                                Data Structure and Alogrithm 
-                            </Button>  
+                                Sports
+                            </Button>
                             <Button variant='solid' radius='sm' className='px-4 w-fit'>
-                                Technology 
-                            </Button>  
+                                Technology
+                            </Button>
                             <Button variant='solid' radius='sm' className='px-4 w-fit'>
-                                Arts 
-                            </Button>                   
+                                Arts
+                            </Button>
+                            <Button variant='solid' radius='sm' className='px-4 w-fit'>
+                                Health
+                            </Button>
+                            <Button variant='solid' radius='sm' className='px-4 w-fit'>
+                                Data Structure and Alogrithm
+                            </Button>
+                            <Button variant='solid' radius='sm' className='px-4 w-fit'>
+                                Technology
+                            </Button>
+                            <Button variant='solid' radius='sm' className='px-4 w-fit'>
+                                Arts
+                            </Button>
                         </div>
                     </div>
                 </div>
