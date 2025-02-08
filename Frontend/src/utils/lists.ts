@@ -6,6 +6,7 @@ export const interestsList: string[] = [
     "Science", 
     "Health & Wellness", 
     "Business", 
+    "Programming",
     "Education", 
     "Sports", 
     "Entertainment", 

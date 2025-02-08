@@ -54,7 +54,24 @@ export const loginUser = async (req: Request, res: Response) : Promise<void> => 
       generateToken(res, user._id.toString())
       res.status(200).json({message: 'Logged In Successfully', user: user})
     } catch (error: unknown) {
-      const err = error as Error;
+       const err = error as Error;
        res.status(500).json({message: "Internal server error", error: err.message})
     }
+}
+
+export const logoutUser = async (req:Request, res: Response) : Promise<void> => {
+  try {
+
+      res.clearCookie('access-token', {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === 'production',
+            sameSite: 'strict'
+      });
+
+      res.status(200).json({message: 'Logged Out Successfully'})
+
+  } catch (error) {
+       const err = error as Error;
+       res.status(500).json({message: "Internal server error", error: err.message})
+  }
 }
