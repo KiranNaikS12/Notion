@@ -1,8 +1,6 @@
 import React, { useEffect } from 'react';
 import HomeHeader from '../components/HomeHeader';
 import { Button } from '@heroui/react';
-import ArticleCard from '../components/ArticleCard';
-import { Search } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { RootState } from '../redux/store/rootReducer';
@@ -49,7 +47,7 @@ const LandingPage: React.FC = () => {
                     />
                 </div>
             </div>
-            <div className='flex ml-[200px] mt-24 mr-[200px] space-x-10'>
+            {/* <div className='flex ml-[200px] mt-24 mr-[200px] space-x-10'>
                 <div className='flex flex-col'>
                     <div className='mb-6'>
                         <h1 className='font-serif text-3xl'>Trending Articles For You..</h1>
@@ -110,7 +108,7 @@ const LandingPage: React.FC = () => {
                         </div>
                     </div>
                 </div>
-            </div>
+            </div> */}
         </div>
 
     );

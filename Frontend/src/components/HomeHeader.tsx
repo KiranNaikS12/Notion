@@ -26,7 +26,9 @@ const HomeHeader: React.FC = () => {
                     <div className="flex items-center justify-between h-16">
                         {/* Logo */}
                         <div className="flex items-center flex-shrink-0">
-                            <h1 className="text-2xl font-bold md:text-4xl ">NOTION<span className='text-[#C20E4D]'>.</span></h1>
+                            <Link to='/home'>
+                                <h1 className="text-2xl font-bold md:text-4xl ">NOTION<span className='text-[#C20E4D]'>.</span></h1>
+                            </Link>
                         </div>
 
                         {/* Desktop Menu */}
@@ -34,14 +36,14 @@ const HomeHeader: React.FC = () => {
                             <div className="items-center hidden space-x-2 md:flex">
                                 <>
                                     <Link to='/publish'>
-                                        <Button className='text-white bg-button'>
+                                        <button className='px-3 py-2 text-sm text-white bg-button rounded-xl' color=''>
                                             Publish
-                                        </Button>
+                                        </button>
                                     </Link>
                                     <Link to={`/profile/${id}`}>
-                                        <Button color='danger' variant='flat'>
+                                        <button className='px-3 py-2 bg-[#D4D4D8] rounded-xl text-sm'>
                                             Account
-                                        </Button>
+                                        </button>
                                     </Link>
                                 </>
                             </div>

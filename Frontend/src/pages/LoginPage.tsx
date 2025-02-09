@@ -21,7 +21,6 @@ const LoginPage: React.FC = () => {
 
     useEffect(() => {
         if (userInfo) {
-            console.log('isAuthenticated')
             navigate("/home", {replace: true})
         }
     }, [userInfo, navigate])
