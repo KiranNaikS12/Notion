@@ -5,6 +5,7 @@ export interface UserData {
     firstName: string;
     lastName: string;
     email: string;
+    profileImage:string;
     dob: string;
     role: string;
     interested: string[];

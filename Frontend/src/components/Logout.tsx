@@ -5,6 +5,7 @@ import { useDispatch } from 'react-redux'
 import { clearCredentials } from '../redux/slices/userSlice'
 import { useNavigate } from 'react-router-dom'
 import Swal from 'sweetalert2'
+import { Button } from '@heroui/react'
 
 
 const Logout: React.FC = () => {
@@ -50,12 +51,9 @@ const Logout: React.FC = () => {
     }
 
     return (
-        <div className='px-4 py-4 rounded-lg shadow-lg bg-gradient-to-b from-red-50 to-red-100 '>
-            <h1 className='text-sm'>Ready to take a break? You can log out safely and return whenever you want. Click below to log out of your account.
-                <span onClick={handleLogout} className='ml-1 text-red-500 cursor-pointer text-bold'>
-                    LOGOUT
-                </span>
-            </h1>
+        <div className='flex flex-col w-full space-y-4'>
+            <Button color="danger"  variant="flat" onPress={handleLogout} className='w-40'>Logout</Button>
+            <Button color="danger"  variant="ghost" onPress={handleLogout} className='w-40'>Delete Account</Button>
         </div>
     )
 }

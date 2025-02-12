@@ -8,7 +8,7 @@ const router = express.Router();
 
 router.post('/register', registerUser);
 router.post('/login', loginUser);
-router.put('/profile/:id', updateProfile);
+router.put('/profile/:id',upload.single('profileImage'), updateProfile);
 router.post('/logout', logoutUser);
 router.post('/upload/:id', upload.single('coverImage'), createArticle);
 router.get('/articles', getArticles);

@@ -28,7 +28,6 @@ const ArticleForm: React.FC = () => {
     const id = userInfo?._id;
     const [coverImage, setCoverImage] = useState<string | null>(null);
     const fileInputRef = useRef<HTMLInputElement>(null);
-    const [isSubheading, setIsSubheading] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
 
     //new states for cropping Images
@@ -138,7 +137,6 @@ const ArticleForm: React.FC = () => {
 
     // Function to upload image locally
     const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
-        console.log('clicked')
         const fileInput = event.target;
         const file = fileInput.files?.[0];
 
@@ -154,15 +152,15 @@ const ArticleForm: React.FC = () => {
     };
 
     // function  for setting sub heading..
-    const addSubheading = () => {
-        if (!editor) return;
+    // const addSubheading = () => {
+    //     if (!editor) return;
 
-        editor.chain().focus().toggleHeading({ level: 2 }).toggleBold().run();
+    //     editor.chain().focus().toggleHeading({ level: 2 }).toggleBold().run();
 
-        setTimeout(() => {
-            setIsSubheading(editor.isActive("heading", { level: 2 }));
-        }, 300);
-    };
+    //     setTimeout(() => {
+    //         setIsSubheading(editor.isActive("heading", { level: 2 }));
+    //     }, 300);
+    // };
 
     // Handle the completion of cropping
     const handleCropComplete = (_: { x: number; y: number; width: number; height: number }, croppedAreaPixels: CropArea) => {
@@ -339,10 +337,10 @@ const ArticleForm: React.FC = () => {
 
                                     {/* Toolbar for Actions */}
                                     <div className="flex items-center gap-2 mb-2">
-                                        <span className="text-gray-500">Options: </span>
-                                        <Button onPress={addSubheading} >
+                                        <span className="text-gray-500">You can use this option to dynamically upload images in your article: </span>
+                                        {/* <Button onPress={addSubheading} >
                                             {isSubheading ? "BOLD" : "NORMAL"}
-                                        </Button>
+                                        </Button> */}
                                         <label className="cursor-pointer">
                                             <input
                                                 type="file"
