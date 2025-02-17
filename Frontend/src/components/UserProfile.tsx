@@ -13,6 +13,7 @@ import { toast, Toaster } from 'sonner'
 import { setCredentials } from '../redux/slices/userSlice'
 import Logout from './Logout'
 import { PenIcon } from 'lucide-react'
+import { baseUrl } from '../utils/baseUrl'
 
 
 interface AccountInfo {
@@ -35,6 +36,7 @@ const UserProfile: React.FC = () => {
     const [hasImageChange, setHasImageChange] = useState<boolean>(false);
     const [modifiedFields, setModifiedFields] = useState<Set<string>>(new Set()); //Track modified fields
     const [imageSrc, setImageSrc] = useState<string | null>(null);
+    const [selectedFile, setSelectedFile] = useState<File | null>(null);
     const fileInputRef = useRef<HTMLInputElement>(null);
     const dispatch = useDispatch();
 
@@ -89,6 +91,7 @@ const UserProfile: React.FC = () => {
             const fileInput = event.target;
             const file = fileInput.files?.[0];
             if (file) {
+                setSelectedFile(file)
                 const reader = new FileReader();
                 reader.onload = () => {
                     const result = reader.result as string;
@@ -111,15 +114,13 @@ const UserProfile: React.FC = () => {
         if (!userInfo) return;
 
         const formData = new FormData();
-        let hasChanges = hasImageChange;
+        let hasChanges = false;
 
-        console.log("FormData before submission:", formData.get("profileImage"));
-
-        if (fileInputRef.current && fileInputRef.current.files?.length) {
-            formData.append('profileImage', fileInputRef.current.files[0]);
+        if (selectedFile) {
+            formData.append('profileImage', selectedFile);
             hasChanges = true;
         }
-
+        
         console.log("FormData before submission:", formData.get("profileImage"));
 
         Array.from(modifiedFields).forEach((field) => {
@@ -143,21 +144,24 @@ const UserProfile: React.FC = () => {
 
 
         try {
-            const response = await axios.put(`http://localhost:5000/api/profile/${id}`, formData, {
+            const response = await axios.put(`${baseUrl}profile/${id}`, formData, {
                 headers: { "Content-Type": "multipart/form-data" },
                 withCredentials: true,
             });
 
             if (response) {
                 toast.success(response?.data?.message);
-                dispatch(setCredentials(response?.data?.user))
+                dispatch(setCredentials(response?.data?.data));
+                setSelectedFile(null);
+                setHasImageChange(false);
+                setImageSrc(null);
+                setModifiedFields(new Set());
+                setIsFirstNameEdit(false);
+                setIsLastNameEdit(false);
+                setIsDobEdit(false);
+                setIsRoleOpen(false);
+                setIsInterestOpen(false);
             }
-            setIsFirstNameEdit(false);
-            setIsLastNameEdit(false);
-            setIsDobEdit(false);
-            setIsRoleOpen(false);
-            setIsInterestOpen(false)
-            setImageSrc(null)
 
         } catch (error) {
             handleApiError(error)
@@ -343,7 +347,7 @@ const UserProfile: React.FC = () => {
                                             <Button
                                                 type='submit'
                                                 variant='ghost'
-                                                color='danger'
+                                                color='success'
                                                 className="px-6 py-2 transition-colors rounded-lg "
                                             >
                                                 Save Changes

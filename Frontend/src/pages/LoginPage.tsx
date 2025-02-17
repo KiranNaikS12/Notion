@@ -11,7 +11,7 @@ import { setCredentials } from '../redux/slices/userSlice';
 import { handleApiError } from '../types/APIResponse';
 import { Toaster } from 'sonner';
 import { RootState } from '../redux/store/store';
-
+import { baseUrl } from '../utils/baseUrl';
 
 
 const LoginPage: React.FC = () => {
@@ -27,13 +27,13 @@ const LoginPage: React.FC = () => {
     
     const handleSubmit = async (values: LoginFormValues) => {
         try {
-            const response = await axios.post("http://localhost:5000/api/login", values, {
+            const response = await axios.post(`${baseUrl}login`, values, {
                 headers: { "Content-Type": "application/json" },
                 withCredentials: true,
             })
             if(response){
                 navigate('/home');
-                dispatch(setCredentials(response.data?.user))
+                dispatch(setCredentials(response.data?.data))
             }
         } catch (error) {
             handleApiError(error)

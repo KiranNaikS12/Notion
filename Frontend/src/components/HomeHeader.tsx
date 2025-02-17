@@ -1,9 +1,10 @@
 import React, { useState } from 'react'
-import { Button, Link as UI, } from "@heroui/react";
+import { Button, Popover, PopoverTrigger, Link as UI, } from "@heroui/react";
 import { Menu, X } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { RootState } from '../redux/store/store';
+import ProfileHover from './ProfilePopover';
 
 
 
@@ -11,7 +12,6 @@ const HomeHeader: React.FC = () => {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const location = useLocation();
     const { userInfo } = useSelector((state: RootState) => state.user);
-    const id = userInfo?._id;
 
     const toggleMenu = () => {
         setIsMenuOpen(!isMenuOpen);
@@ -40,11 +40,13 @@ const HomeHeader: React.FC = () => {
                                             Publish
                                         </button>
                                     </Link>
-                                    <Link to={`/profile/${id}`}>
-                                        <button className='px-3 py-2 bg-[#D4D4D8] rounded-xl text-sm'>
-                                            Account
-                                        </button>
-                                    </Link>
+
+                                    <Popover placement='bottom' showArrow={true} >
+                                        <PopoverTrigger>
+                                            <img src={userInfo?.profileImage} alt="" className='border-2 border-red-500 rounded-full h-9 w-9' />
+                                        </PopoverTrigger>
+                                        <ProfileHover />
+                                    </Popover>
                                 </>
                             </div>
                         ) : (

@@ -1,7 +1,9 @@
 import { Request, Response } from 'express';
 import userModel from '@models/userModel';
 import { getSignedUrl, uploadToS3 } from 'config/s3';
-
+import { sendResponse } from 'utils/formatResponse';
+import { ResponseMessage } from 'utils/messages';
+import { sendErrorResponse } from 'utils/errorResponse';
 
 
 export const updateProfile = async (req: Request, res: Response): Promise<void> => {
@@ -20,7 +22,7 @@ export const updateProfile = async (req: Request, res: Response): Promise<void> 
         updationDetails.profileImage = imageKey;
 
       } catch (error) {
-        res.status(500).json({ message: 'Error uploading profile image' });
+        sendErrorResponse(res,400,ResponseMessage.FILE_UPLOAD_ERROR )
         return;
       }
     }
@@ -32,7 +34,7 @@ export const updateProfile = async (req: Request, res: Response): Promise<void> 
     )
 
     if (!updateUser) {
-      res.status(404).json({ message: 'User Not Found' });
+      sendErrorResponse(res, 404, ResponseMessage.USER_NOT_FOUND)
       return;
     }
 
@@ -44,19 +46,18 @@ export const updateProfile = async (req: Request, res: Response): Promise<void> 
         const signedUrl = await getSignedUrl(
           bucketName,
           updateUser.profileImage,
-          3600 
         );
         userWithSignedUrl = {
           ...userWithSignedUrl,
           profileImage: signedUrl
         };
       } catch (error) {
-        res.status(400).json({ messsage: 'Failed to generate signed URL' })
+        sendErrorResponse(res, 400, ResponseMessage.FAILED_TO_GENERATE_SIGNED_URL )
         return;
       }
     }
 
-    res.status(201).json({ message: 'Profile Updatd Successfully', user: userWithSignedUrl })
+    sendResponse(res, 201, ResponseMessage.PROFILE_UPDATED, userWithSignedUrl)
 
   } catch (error) {
     const err = error as Error;

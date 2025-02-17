@@ -11,6 +11,9 @@ import { useDispatch, useSelector } from 'react-redux';
 import { setCredentials } from '../redux/slices/userSlice';
 import { handleApiError } from '../types/APIResponse';
 import { RootState } from '../redux/store/store';
+import { baseUrl } from '../utils/baseUrl';
+import { Toaster } from 'sonner';
+
 
 
 const RegistrationPage: React.FC = () => {
@@ -32,23 +35,27 @@ const RegistrationPage: React.FC = () => {
 
     const handleSubmit = async (values: RegistrationFormValues) => {
         try {
-            const response = await axios.post("http://localhost:5000/api/register", values, {
+            const response = await axios.post(`${baseUrl}register`, values, {
                 headers: { "Content-Type": "application/json" },
                 withCredentials: true,
             });
-
             if (response) {
                 navigate('/home');
-                dispatch(setCredentials(response.data?.user))
+                dispatch(setCredentials(response.data?.data))
             }
         } catch (error) {
-            handleApiError(error)
+            handleApiError(error);
+            setStep(1)
         }
     }
 
 
     return (
         <div className='relative flex flex-col items-center justify-center min-h-screen p-4'>
+            <Toaster 
+               position='top-center'
+               richColors
+            />
             <div className="absolute top-0 flex items-center flex-shrink-0 p-6 left-48">
                 <h1 className="text-2xl font-bold md:text-4xl text-header">NOTION<span className='text-[#C20E4D]'>.</span></h1>
             </div>
@@ -71,7 +78,7 @@ const RegistrationPage: React.FC = () => {
 
                     const handleInterestToggle = (interest: string) => {
                         const updatedInterests: string[] = (values.interested as string[]).includes(interest)
-                            ? values.interested.filter(item => item !== interest)  // Remove if already selected
+                            ? values.interested.filter(item => item !== interest)  
                             : [...values.interested, interest];
 
                         setFieldValue("interested", updatedInterests);

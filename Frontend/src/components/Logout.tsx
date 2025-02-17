@@ -6,6 +6,7 @@ import { clearCredentials } from '../redux/slices/userSlice'
 import { useNavigate } from 'react-router-dom'
 import Swal from 'sweetalert2'
 import { Button } from '@heroui/react'
+import { baseUrl } from '../utils/baseUrl'
 
 
 const Logout: React.FC = () => {
@@ -30,7 +31,7 @@ const Logout: React.FC = () => {
 
             if(result.isConfirmed){
                 const response = await axios.post(
-                    "http://localhost:5000/api/logout",
+                    `${baseUrl}logout`,
                     {},
                     {
                         headers: { "Content-Type": "application/json" },

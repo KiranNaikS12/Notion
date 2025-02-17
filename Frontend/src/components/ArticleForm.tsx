@@ -16,6 +16,7 @@ import { RootState } from "../redux/store/store";
 import { toast, Toaster } from "sonner";
 import { useNavigate } from "react-router-dom";
 import { articleFormValidation } from "../validations/articleValidation";
+import { baseUrl } from "../utils/baseUrl";
 
 interface FormValues {
     title: string;
@@ -110,7 +111,7 @@ const ArticleForm: React.FC = () => {
 
             }
 
-            const response = await axios.post(`http://localhost:5000/api/upload/${id}`, formData, {
+            const response = await axios.post(`${baseUrl}upload/${id}`, formData, {
                 headers: { "Content-Type": "multipart/form-data" },
                 withCredentials: true,
             })

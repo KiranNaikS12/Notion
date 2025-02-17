@@ -12,13 +12,14 @@ import { IArticle } from '../types/articleTypes'
 import { useSelector } from 'react-redux'
 import { RootState } from '../redux/store/store'
 import { Link } from 'react-router-dom'
+import { baseUrl } from '../utils/baseUrl'
 
 
 
 const UserHome: React.FC = () => {
   const [allArticles, setAllArticles] = useState<IArticle[]>([]);
   const [articles, setArticles] = useState<IArticle[]>([]);
-  const [loading, setLoading] = useState(true);
+
   const [selectedCategory, setSelectedCategory] = useState<string>('');
   const [searchQuery, setSearchQuery] = useState('');
 
@@ -28,10 +29,9 @@ const UserHome: React.FC = () => {
   useEffect(() => {
     const fetchArticles = async () => {
       try {
-        setLoading(true);
         const url = selectedCategory
-          ? `http://localhost:5000/api/articles/category/${selectedCategory}`
-          : 'http://localhost:5000/api/articles';
+          ? `${baseUrl}articles/category/${selectedCategory}`
+          : `${baseUrl}articles`;
 
         const response = await axios.get(url, {
           withCredentials: true
@@ -41,14 +41,11 @@ const UserHome: React.FC = () => {
 
       } catch (error) {
         handleApiError(error);
-      } finally {
-        setLoading(false)
       }
     };
 
     fetchArticles();
-
-  }, [ selectedCategory]);
+  }, [selectedCategory]);
 
 
 
@@ -56,16 +53,16 @@ const UserHome: React.FC = () => {
   // HandleSearch
   const handleSearch = () => {
     if (!searchQuery.trim()) {
-      setArticles(allArticles); 
+      setArticles(allArticles);
       return;
     }
-  
+
     const filteredArticles = allArticles.filter(article =>
       article.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
       article.category.toLowerCase().includes(searchQuery.toLowerCase()) ||
       article.user.firstName.toLowerCase().includes(searchQuery.toLowerCase())
     );
-  
+
     setArticles(filteredArticles);
   };
 
@@ -107,7 +104,7 @@ const UserHome: React.FC = () => {
         {articles.length === 0 ? (
           <div className='flex flex-col items-center justify-center w-[1200px] space-y-3'>
             <p className='animate-pulse'>Found Nothing, but every great creation starts from nothing—why not start now :)</p>
-            <Link to = '/publish'>
+            <Link to='/publish'>
               <button className='px-3 py-2 bg-[#D4D4D8] rounded-xl text-sm'>
                 Create
               </button>

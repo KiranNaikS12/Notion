@@ -2,8 +2,10 @@ import { Request, Response } from 'express';
 import articleModel from '../models/articleModel';
 import { getSignedUrl, uploadToS3 } from 'config/s3';
 import {  ArticleResponse } from '../types/articleTypes';
-
-
+import userModel from '@models/userModel';
+import { sendResponse } from 'utils/formatResponse';
+import { ResponseMessage } from 'utils/messages';
+import { sendErrorResponse } from 'utils/errorResponse';
 
 // CreateArticle:
 export const createArticle = async (req:Request, res:Response) : Promise<void> => {
@@ -28,7 +30,7 @@ export const createArticle = async (req:Request, res:Response) : Promise<void> =
             })
 
             await newArticle.save()
-            res.status(201).json({message: "Article created successfully"})
+            sendResponse(res, 201, ResponseMessage.ARTICLE_CREATED_SUCCESSFULLY)
         }
     } catch (error) {
         const err = error as Error;
@@ -84,17 +86,17 @@ export const likeArticle = async (req: Request, res:Response) : Promise<void> =>
         const { userId, isLiked } = req.body;
 
         if(!userId) {
-            res.status(404).json({message: 'User Not Found'});
+            sendErrorResponse(res, 404, ResponseMessage.USER_NOT_FOUND);
             return;
         }
 
         if(!articleId) {
-            res.status(404).json({message: 'Article Not Found'});
+            sendErrorResponse(res, 404, ResponseMessage.ARTICLE_NOT_FOUND)
         }
 
         const article = await articleModel.findById(articleId);
         if(!article) {
-            res.status(404).json({message: 'Article Not Found'});
+            sendErrorResponse(res, 404, ResponseMessage.ARTICLE_NOT_FOUND)
             return;
         }
 
@@ -118,5 +120,57 @@ export const likeArticle = async (req: Request, res:Response) : Promise<void> =>
     } catch (error) {
         const err = error as Error;
         res.status(500).json({ message: "Server Error", error: err.message }); 
+    }
+}
+
+export const getUserArticle = async(req:Request, res:Response) : Promise<void> => {
+    try {
+        const { id } = req.params;
+        const user = await userModel.findById(id);
+        const bucketName = process.env.S3_BUCKET_NAME as string;
+
+        if(!user) {
+            sendErrorResponse(res, 404, ResponseMessage.USER_NOT_FOUND);
+            return;
+        }
+
+        const articles = await articleModel.find({user: user._id}).sort({createdAt: -1}).lean();
+
+        const articlesWithUrls = await Promise.all(
+            articles.map(async (articles: ArticleResponse) => {
+                if(articles.coverImage) {
+                    const signedUrl = await getSignedUrl(
+                        bucketName,
+                        articles.coverImage,
+                        3600
+                    );
+
+                    return {...articles, coverImageUrl: signedUrl}
+                };
+
+                return articles;
+            })
+        )
+
+        sendResponse(res, 200, ResponseMessage.ARTICLE_LISTED_SUCCESSFULLY, articlesWithUrls)
+    } catch (error) {
+        const err = error as Error;
+        res.status(500).json({ message: "Server Error", error: err.message });
+    }
+}
+
+
+export const removeArticle = async(req:Request, res:Response) : Promise<void> => {
+    try {
+        const { articleId } = req.params;    
+        const article = await articleModel.findByIdAndDelete(articleId);
+        if(!article) {
+            sendErrorResponse(res, 404, ResponseMessage.ARTICLE_NOT_FOUND)
+            return;
+        }
+        sendResponse(res, 200, ResponseMessage.ARTICLE_REMOVED)
+    } catch (error) {
+        const err = error as Error;
+        res.status(500).json({ message: "Server Error", error: err.message });
     }
 }
