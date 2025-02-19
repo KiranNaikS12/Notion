@@ -46,3 +46,11 @@ export const getSignedUrl = async(
     }
 }
 
+export const deleteFromS3 = async (bucketName: string, key: string): Promise<void> => {
+    const s3 = new AWS.S3();
+    await s3.deleteObject({
+        Bucket: bucketName,
+        Key: key
+    }).promise();
+};
+

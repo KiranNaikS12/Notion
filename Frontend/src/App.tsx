@@ -7,6 +7,7 @@ import PrivateRoute from './routes/PrivateRoute';
 import UserProfile from './components/UserProfile';
 import ArticleForm from './components/ArticleForm';
 import MyArticles from './pages/MyArticles';
+import UpdateArticle from './pages/UpdateArticle';
 
 
 function App() {
@@ -25,6 +26,7 @@ function App() {
             <Route path = '/profile/:id' element = {<UserProfile/>}/>
             <Route path = '/publish' element = {<ArticleForm/>}/>
             <Route path = '/articles' element = {<MyArticles/>}/>
+            <Route path = '/update/:id' element = {<UpdateArticle/>}/>
           </Route>
         </Routes>
       </Router>

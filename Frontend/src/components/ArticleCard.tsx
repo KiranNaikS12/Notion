@@ -7,7 +7,7 @@ import ViewArticle from './ViewArticle';
 import { handleApiError } from '../types/APIResponse';
 import axios from 'axios';
 import { motion } from 'framer-motion';
-import { useLocation } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { baseUrl } from '../utils/baseUrl';
 
 
@@ -170,7 +170,9 @@ const ArticleCard: React.FC<ArticleProps> = ({ data, userId, onArticleRemove }) 
                         </div>
                         {isMyArticlePage && (
                             <div className='flex justify-end space-x-2'>
+                                <Link to = {`/update/${article._id}`} >
                                 <Button color='primary' variant='faded'>UPDATE</Button>
+                                </Link>
                                 <Button
                                     color='danger'
                                     variant='flat'

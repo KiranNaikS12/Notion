@@ -31,7 +31,7 @@ const UserHome: React.FC = () => {
       try {
         const url = selectedCategory
           ? `${baseUrl}articles/category/${selectedCategory}`
-          : `${baseUrl}articles`;
+          : `${baseUrl}articles/${id}`;
 
         const response = await axios.get(url, {
           withCredentials: true

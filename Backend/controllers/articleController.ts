@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import articleModel from '../models/articleModel';
-import { getSignedUrl, uploadToS3 } from 'config/s3';
+import { deleteFromS3, getSignedUrl, uploadToS3 } from 'config/s3';
 import {  ArticleResponse } from '../types/articleTypes';
 import userModel from '@models/userModel';
 import { sendResponse } from 'utils/formatResponse';
@@ -43,34 +43,57 @@ export const createArticle = async (req:Request, res:Response) : Promise<void> =
 export const getArticles = async (req: Request, res:Response) : Promise<void> => {
     try {
         const bucketName = process.env.S3_BUCKET_NAME as string;
-        const { category } = req.params;
+        const { category, id } = req.params;
 
-        let filter = {};
+        let preferredArticles: ArticleResponse[] = [];
+        let generalArticles: ArticleResponse[] = [];
 
-        if(category) {
-            filter={category}
+        if(id) {
+            const user = await userModel.findById(id)
+
+            if(!user) {
+                sendErrorResponse(res, 404, ResponseMessage.USER_NOT_FOUND);
+                return;
+            }
+
+            if(user.interested.length > 0) {
+                preferredArticles = await articleModel.find({category: {$in: user.interested}})
+                    .populate('user', 'firstName lastName')
+                    .sort({ createdAt: -1 })
+                    .lean();
+            }
         }
 
-        //Populate Author
-        const articles = await articleModel.find(filter)
-            .populate('user', 'firstName lastName')
-            .sort({createdAt: -1})
-            .lean()
+        if (category) {
+            preferredArticles = await articleModel.find({ category })
+                .populate('user', 'firstName lastName')
+                .sort({ createdAt: -1 })
+                .lean();
+        }
+
+        if (preferredArticles.length < 5) { 
+            const preferredArticleIds = preferredArticles.map(article => article._id);
+            generalArticles = await articleModel.find({ _id: { $nin: preferredArticleIds } })
+                .populate('user', 'firstName lastName')
+                .sort({ createdAt: -1 })
+                .lean();
+        }
+
+        const allArticles = [...preferredArticles, ...generalArticles];
+
 
         // Get signed URLs for all cover images
         const articlesWithUrls = await Promise.all(
-            articles.map(async (articles: ArticleResponse) => {
-                if(articles.coverImage) {
-                    const signedUrl = await getSignedUrl(
-                        bucketName,
-                        articles.coverImage,
-                        3600
-                    );
-                    return {...articles, coverImageUrl: signedUrl}
+            allArticles.map(async (article: ArticleResponse) => {
+                if (article.coverImage) {
+                    const signedUrl = await getSignedUrl(bucketName, article.coverImage, 3600);
+                    return { ...article, coverImageUrl: signedUrl };
                 }
-                return articles;
+                return article;
             })
         );
+
+
         res.status(200).json(articlesWithUrls)
 
     } catch (error) {
@@ -170,6 +193,89 @@ export const removeArticle = async(req:Request, res:Response) : Promise<void> =>
         }
         sendResponse(res, 200, ResponseMessage.ARTICLE_REMOVED)
     } catch (error) {
+        const err = error as Error;
+        res.status(500).json({ message: "Server Error", error: err.message });
+    }
+}
+
+export const getArticleById = async(req:Request, res:Response) : Promise<void> => {
+    try {
+        const { id } = req.params;
+        const bucketName = process.env.S3_BUCKET_NAME as string;
+        if(!id) {
+            sendErrorResponse(res, 404, ResponseMessage.ARTICLE_NOT_FOUND)
+        }
+
+        const article = await articleModel.findById(id);
+        if(!article) {
+            sendErrorResponse(res, 404, ResponseMessage.ARTICLE_NOT_FOUND)
+        }
+
+        if (article && article.coverImage) {
+            const signedUrl = await getSignedUrl(bucketName, article.coverImage, 3600);
+            article.coverImage = signedUrl; 
+        }
+
+        sendResponse(res, 200, ResponseMessage.ARTICLE_LISTED_SUCCESSFULLY, article)
+        
+    } catch (error) {
+        const err = error as Error;
+        res.status(500).json({ message: "Server Error", error: err.message });
+    }
+}
+
+export const updateArticle =  async(req:Request, res: Response,) : Promise<void> => {
+    try {
+        const { id } = req.params;
+        if (!id) {
+            sendErrorResponse(res, 404, ResponseMessage.ARTICLE_NOT_FOUND);
+            return;
+        }
+
+        const existingArticle = await articleModel.findById(id);
+        if (!existingArticle) {
+            sendErrorResponse(res, 404, ResponseMessage.ARTICLE_NOT_FOUND);
+            return;
+        }
+
+        const { title, category, content } = req.body;
+        const coverImage = req.file;
+
+        const updateData: any = {
+            title,
+            category,
+            content
+        };
+
+        if (coverImage) {
+            const bucketName = process.env.S3_BUCKET_NAME as string;
+
+            // Delete the old image from S3 if it exists
+            if (existingArticle.coverImage) {
+                await deleteFromS3(bucketName, existingArticle.coverImage);
+            }
+
+            const newImageKey = `articles/${Date.now()}-${coverImage.originalname}`;
+            await uploadToS3(coverImage, bucketName, newImageKey);
+            updateData.coverImage = newImageKey;
+        }
+
+        const updatedArticle = await articleModel.findByIdAndUpdate(
+            id,
+            { $set: updateData },
+            { new: true } 
+        );
+
+        if (updatedArticle && updatedArticle.coverImage) {
+            const bucketName = process.env.S3_BUCKET_NAME as string;
+            const signedUrl = await getSignedUrl(bucketName, updatedArticle.coverImage, 3600);
+            updatedArticle.coverImage = signedUrl;
+        }
+
+        sendResponse(res, 200, ResponseMessage.ARTICLE_UPDATED_SUCCESSFULLY, updatedArticle);
+         
+    } catch(error) {
+        console.log(error)
         const err = error as Error;
         res.status(500).json({ message: "Server Error", error: err.message });
     }

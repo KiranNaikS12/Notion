@@ -152,17 +152,6 @@ const ArticleForm: React.FC = () => {
         }
     };
 
-    // function  for setting sub heading..
-    // const addSubheading = () => {
-    //     if (!editor) return;
-
-    //     editor.chain().focus().toggleHeading({ level: 2 }).toggleBold().run();
-
-    //     setTimeout(() => {
-    //         setIsSubheading(editor.isActive("heading", { level: 2 }));
-    //     }, 300);
-    // };
-
     // Handle the completion of cropping
     const handleCropComplete = (_: { x: number; y: number; width: number; height: number }, croppedAreaPixels: CropArea) => {
         setCroppedAreaPixels(croppedAreaPixels);

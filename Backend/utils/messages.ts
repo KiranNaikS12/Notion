@@ -11,5 +11,6 @@ export const ResponseMessage = {
     FAILED_TO_GENERATE_SIGNED_URL:'Failed to generate signed url',
     FILE_UPLOAD_ERROR:'Error uploading profile image',
     ARTICLE_NOT_FOUND:'Article Not Found',
-    ARTICLE_CREATED_SUCCESSFULLY:'Article created successfull'
+    ARTICLE_CREATED_SUCCESSFULLY:'Article created successfull',
+    ARTICLE_UPDATED_SUCCESSFULLY:'Article Updated Successfully'
 }
