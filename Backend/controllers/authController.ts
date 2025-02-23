@@ -13,7 +13,7 @@ export const registerUser = async (req: Request, res: Response): Promise<void> =
   try {
       const { firstName, lastName, email, dob, password, role, interested } = req.body;
 
-      const existingUser = await userModel.find({email});
+      const existingUser = await userModel.findOne({email});
       if (existingUser) {
         sendErrorResponse(res, 400, ResponseMessage.USER_ALREADY_EXISTS)
         return;

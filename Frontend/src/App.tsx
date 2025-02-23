@@ -18,6 +18,7 @@ function App() {
           <Route path='/' element = {<LandingPage/>}></Route>
           <Route path='/login' element={<LoginPage/>}></Route>
           <Route path='/register' element={<RegistrationPage/>}></Route>
+        
           
           
           {/* Protect Routes */}

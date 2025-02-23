@@ -70,7 +70,8 @@ const UpdateArticle: React.FC = () => {
     useEffect(() => {
         const fetchArticle = async () => {
             try {
-                const response = await axios.get(`${baseUrl}article/${id}`, {
+                const response = await axios.get(`${baseUrl}article/${
+                    id}`, {
                     withCredentials: true
                 });
                 const articleData = response?.data?.data;
