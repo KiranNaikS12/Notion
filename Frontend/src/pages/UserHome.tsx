@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import HomeHeader from '../components/HomeHeader'
 import InterestsCarousel from '../components/InterestsCarousel'
-import { interestsList } from '../utils/lists'
+import { filters, interestsList } from '../utils/lists'
 import ArticleCard from '../components/ArticleCard'
 import { Search } from 'lucide-react'
 import { Button } from '@heroui/react'
@@ -13,41 +13,77 @@ import { useSelector } from 'react-redux'
 import { RootState } from '../redux/store/store'
 import { Link } from 'react-router-dom'
 import { baseUrl } from '../utils/baseUrl'
+import InfiniteScroll from 'react-infinite-scroll-component'
 
 
 
 const UserHome: React.FC = () => {
   const [allArticles, setAllArticles] = useState<IArticle[]>([]);
   const [articles, setArticles] = useState<IArticle[]>([]);
-
+  const [hasMore, setHasMore] = useState<boolean>(true);
+  const [page, setPage] = useState<number>(1);
+  const [loading, setLoading] = useState<boolean>(false);
   const [selectedCategory, setSelectedCategory] = useState<string>('');
   const [searchQuery, setSearchQuery] = useState('');
-
+  const LIMIT = 3;
   const { userInfo } = useSelector((state: RootState) => state.user);
   const id = userInfo?._id;
+ 
+
+  const fetchArticles = useCallback(async (pageNumber = 1, reset = false) => {
+    try {
+      setLoading(true);
+      const url = selectedCategory
+        ? `${baseUrl}articles/category/${selectedCategory}`
+        : `${baseUrl}articles/${id}`;
+
+      const response = await axios.get(`${url}?page=${pageNumber}&limit=${LIMIT}`, {
+        withCredentials: true
+      });
+
+      const newArticles = response?.data;
+      const newIds = new Set<string>(); 
+
+      const uniqueNewArticles = newArticles.filter((article: IArticle) => {
+        if (!newIds.has(article._id)) {
+          newIds.add(article._id);
+          return true;
+        }
+        return false;
+      });
+
+      setHasMore(uniqueNewArticles.length >= LIMIT);
+      
+
+      if (reset) {
+        setAllArticles(uniqueNewArticles);
+        setArticles(uniqueNewArticles);
+      } else {
+        setAllArticles(prevArticles => [...prevArticles, ...uniqueNewArticles]);
+        setArticles(prevArticles => [...prevArticles, ...uniqueNewArticles]);
+      }
+      
+    } catch (error) {
+      handleApiError(error);
+    } finally {
+      setLoading(false);
+    }
+  }, [id, selectedCategory]);
 
   useEffect(() => {
-    const fetchArticles = async () => {
-      try {
-        const url = selectedCategory
-          ? `${baseUrl}articles/category/${selectedCategory}`
-          : `${baseUrl}articles/${id}`;
-
-        const response = await axios.get(url, {
-          withCredentials: true
-        });
-        setAllArticles(response?.data);
-        setArticles(response?.data)
-
-      } catch (error) {
-        handleApiError(error);
-      }
-    };
-
-    fetchArticles();
-  }, [selectedCategory]);
+    setPage(1);
+    setHasMore(true);
+    fetchArticles(1, true)
+  }, [selectedCategory, fetchArticles]);
 
 
+  const loadMoreArticles = () => {
+    if (!loading && hasMore) {
+      const nextPage = page + 1;
+      setPage(nextPage);
+      fetchArticles(nextPage);
+    }
+  };
 
 
   // HandleSearch
@@ -70,14 +106,7 @@ const UserHome: React.FC = () => {
     setSelectedCategory(category)
   }
 
-  const filters = [
-    'Most Liked',
-    'Following',
-    'Recent',
-    'Trending',
-    'Most Commented',
-    'Top Rated'
-  ];
+  
 
   return (
     <div className='flex flex-col min-h-screen'>
@@ -118,7 +147,20 @@ const UserHome: React.FC = () => {
             </div>
 
             <div className='flex'>
-              <ArticleCard data={articles} userId={id} />
+              <InfiniteScroll
+                dataLength={articles.length}
+                next={loadMoreArticles}
+                hasMore={hasMore}
+                loader={<p className="mt-4 text-center">Loading more articles...</p>}
+                endMessage={
+                  <p className="mt-4 text-center text-gray-500">
+                    No more articles to load
+                  </p>
+                }
+                scrollThreshold={0.8}
+              >  
+                <ArticleCard data={articles} userId={id} />
+              </InfiniteScroll>
             </div>
           </div>
         )}

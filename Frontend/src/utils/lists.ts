@@ -31,3 +31,12 @@ export const interestsList: string[] = [
     "Philosophy",
     "Others"
 ];
+
+export const filters = [
+    'Most Liked',
+    'Following',
+    'Recent',
+    'Trending',
+    'Most Commented',
+    'Top Rated'
+];

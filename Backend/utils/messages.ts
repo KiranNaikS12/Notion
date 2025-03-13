@@ -12,5 +12,6 @@ export const ResponseMessage = {
     FILE_UPLOAD_ERROR:'Error uploading profile image',
     ARTICLE_NOT_FOUND:'Article Not Found',
     ARTICLE_CREATED_SUCCESSFULLY:'Article created successfull',
-    ARTICLE_UPDATED_SUCCESSFULLY:'Article Updated Successfully'
+    ARTICLE_UPDATED_SUCCESSFULLY:'Article Updated Successfully',
+    USER_LISTED: 'USER LISTED SUCCESSFULLY'
 }

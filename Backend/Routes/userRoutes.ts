@@ -3,6 +3,7 @@ import { loginUser, logoutUser, registerUser } from '../controllers/authControll
 import { updateProfile } from '../controllers/profileController';
 import upload from 'config/multerConfig';
 import { createArticle, getArticleById, getArticles, getUserArticle, likeArticle, removeArticle, updateArticle } from '../controllers/articleController';
+import { topUserAccounts } from '@controllers/userController';
 
 
 const router = express.Router();
@@ -17,7 +18,8 @@ router.post('/heart/:articleId', likeArticle);
 router.get('/my-article/:id', getUserArticle);
 router.delete('/remove/:articleId', removeArticle);
 router.get('/article/:id', getArticleById);
-router.put('/article/:id',upload.single('coverImage'), updateArticle)
+router.put('/article/:id',upload.single('coverImage'), updateArticle);
+router.get('/followers', topUserAccounts)
 
 
 export default router;

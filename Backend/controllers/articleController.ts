@@ -45,6 +45,10 @@ export const getArticles = async (req: Request, res:Response) : Promise<void> =>
         const bucketName = process.env.S3_BUCKET_NAME as string;
         const { category, id } = req.params;
 
+        const page = parseInt(req.query.page as string) || 1;
+        const limit = parseInt(req.query.limit as string) || 3;
+        const skip = (page - 1) * limit;
+
         let preferredArticles: ArticleResponse[] = [];
         let generalArticles: ArticleResponse[] = [];
 
@@ -60,6 +64,8 @@ export const getArticles = async (req: Request, res:Response) : Promise<void> =>
                 preferredArticles = await articleModel.find({category: {$in: user.interested}})
                     .populate('user', 'firstName lastName')
                     .sort({ createdAt: -1 })
+                    .skip(skip)
+                    .limit(limit)
                     .lean();
             }
         }
@@ -68,14 +74,22 @@ export const getArticles = async (req: Request, res:Response) : Promise<void> =>
             preferredArticles = await articleModel.find({ category })
                 .populate('user', 'firstName lastName')
                 .sort({ createdAt: -1 })
+                .skip(skip)
+                .limit(limit)
                 .lean();
         }
 
         if (preferredArticles.length < 5) { 
             const preferredArticleIds = preferredArticles.map(article => article._id);
+            const remainingLimit = limit - preferredArticles.length;
+
+            const generalArticlesSkip = page > 1 ? skip - (page - 1) * preferredArticles.length : 0;
+
             generalArticles = await articleModel.find({ _id: { $nin: preferredArticleIds } })
                 .populate('user', 'firstName lastName')
                 .sort({ createdAt: -1 })
+                .skip(Math.max(0, generalArticlesSkip))
+                .limit(remainingLimit)
                 .lean();
         }
 
@@ -92,7 +106,6 @@ export const getArticles = async (req: Request, res:Response) : Promise<void> =>
                 return article;
             })
         );
-
 
         res.status(200).json(articlesWithUrls)
 
