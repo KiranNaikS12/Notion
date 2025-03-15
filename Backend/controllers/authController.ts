@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import userModel from '../models/userModel';
-import { hashPassword } from 'utils/hashPassword';
+import { hashPassword } from '../utils/hashPassword';
 import bcrypt from 'bcryptjs'
 import generateToken from '../config/generateToken';
 import { getSignedUrl } from '../config/s3';
