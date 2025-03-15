@@ -1,12 +1,12 @@
 import { Request, Response } from 'express';
-import userModel from '@models/userModel';
+import userModel from '../models/userModel';
 import { hashPassword } from 'utils/hashPassword';
 import bcrypt from 'bcryptjs'
-import generateToken from 'config/generateToken';
-import { getSignedUrl } from 'config/s3';
-import { sendResponse } from 'utils/formatResponse';
-import { ResponseMessage } from 'utils/messages';
-import { sendErrorResponse } from 'utils/errorResponse';
+import generateToken from '../config/generateToken';
+import { getSignedUrl } from '../config/s3';
+import { sendResponse } from '../utils/formatResponse';
+import { ResponseMessage } from '../utils/messages';
+import { sendErrorResponse } from '../utils/errorResponse';
 
 
 export const registerUser = async (req: Request, res: Response): Promise<void> => {

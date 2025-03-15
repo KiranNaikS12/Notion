@@ -1,11 +1,11 @@
 import { Request, Response } from 'express';
 import articleModel from '../models/articleModel';
-import { deleteFromS3, getSignedUrl, uploadToS3 } from 'config/s3';
+import { deleteFromS3, getSignedUrl, uploadToS3 } from '../config/s3';
 import {  ArticleResponse } from '../types/articleTypes';
-import userModel from '@models/userModel';
-import { sendResponse } from 'utils/formatResponse';
-import { ResponseMessage } from 'utils/messages';
-import { sendErrorResponse } from 'utils/errorResponse';
+import userModel from '../models/userModel';
+import { sendResponse } from '../utils/formatResponse';
+import { ResponseMessage } from '../utils/messages';
+import { sendErrorResponse } from '../utils/errorResponse';
 
 // CreateArticle:
 export const createArticle = async (req:Request, res:Response) : Promise<void> => {

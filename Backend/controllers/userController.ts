@@ -1,9 +1,8 @@
 import { Request, Response } from 'express';
-import userModel from '@models/userModel';
-import articleModel from '@models/articleModel';
-import { sendResponse } from 'utils/formatResponse';
-import { ResponseMessage } from 'utils/messages';
-import { sendErrorResponse } from 'utils/errorResponse';
+import userModel from '../models/userModel';
+import { sendResponse } from '../utils/formatResponse';
+import { ResponseMessage } from '../utils/messages';
+import { sendErrorResponse } from '../utils/errorResponse';
 import mongoose from 'mongoose';
 
 

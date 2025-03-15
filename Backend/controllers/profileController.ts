@@ -1,9 +1,9 @@
 import { Request, Response } from 'express';
-import userModel from '@models/userModel';
-import { getSignedUrl, uploadToS3 } from 'config/s3';
-import { sendResponse } from 'utils/formatResponse';
-import { ResponseMessage } from 'utils/messages';
-import { sendErrorResponse } from 'utils/errorResponse';
+import userModel from '../models/userModel';
+import { getSignedUrl, uploadToS3 } from '../config/s3';
+import { sendResponse } from '../utils/formatResponse';
+import { ResponseMessage } from '../utils/messages';
+import { sendErrorResponse } from '../utils/errorResponse';
 import mongoose from 'mongoose';
 
 

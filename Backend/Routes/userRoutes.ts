@@ -1,9 +1,9 @@
 import express from 'express';
 import { loginUser, logoutUser, registerUser } from '../controllers/authController';
 import { getUserStats, updateProfile } from '../controllers/profileController';
-import upload from 'config/multerConfig';
+import upload from '../config/multerConfig';
 import { createArticle, getArticleById, getArticles, getUserArticle, likeArticle, removeArticle, updateArticle } from '../controllers/articleController';
-import { currentUser, handleToggleFollow, topUserAccounts } from '@controllers/userController';
+import { currentUser, handleToggleFollow, topUserAccounts } from '../controllers/userController';
 
 
 const router = express.Router();
