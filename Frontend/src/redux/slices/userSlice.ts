@@ -9,6 +9,7 @@ export interface UserData {
     dob: string;
     role: string;
     interested: string[];
+    
 }
 
 interface UserState {

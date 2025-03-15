@@ -4,8 +4,10 @@ import { getSignedUrl, uploadToS3 } from 'config/s3';
 import { sendResponse } from 'utils/formatResponse';
 import { ResponseMessage } from 'utils/messages';
 import { sendErrorResponse } from 'utils/errorResponse';
+import mongoose from 'mongoose';
 
 
+// UPDATE_PROFILE_FUNCTIONALITY
 export const updateProfile = async (req: Request, res: Response): Promise<void> => {
   try {
     const { id } = req.params;
@@ -22,7 +24,7 @@ export const updateProfile = async (req: Request, res: Response): Promise<void> 
         updationDetails.profileImage = imageKey;
 
       } catch (error) {
-        sendErrorResponse(res,400,ResponseMessage.FILE_UPLOAD_ERROR )
+        sendErrorResponse(res, 400, ResponseMessage.FILE_UPLOAD_ERROR)
         return;
       }
     }
@@ -52,12 +54,60 @@ export const updateProfile = async (req: Request, res: Response): Promise<void> 
           profileImage: signedUrl
         };
       } catch (error) {
-        sendErrorResponse(res, 400, ResponseMessage.FAILED_TO_GENERATE_SIGNED_URL )
+        sendErrorResponse(res, 400, ResponseMessage.FAILED_TO_GENERATE_SIGNED_URL)
         return;
       }
     }
 
     sendResponse(res, 201, ResponseMessage.PROFILE_UPDATED, userWithSignedUrl)
+
+  } catch (error) {
+    const err = error as Error;
+    res.status(500).json({ message: "Internal server error", error: err.message })
+  }
+}
+
+
+// GET_USER_STATS
+export const getUserStats = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const { userId } = req.params;
+
+    const userStats = await userModel.aggregate([
+      {
+        $lookup: {
+          from: "articles",
+          localField: "_id",
+          foreignField: "user",
+          as: "userArticles"
+        }
+      },
+      {
+        $addFields: {
+          articleCount: { $size: { $ifNull: ["$userArticles", []] } }, // Ensure array is not null
+          followersCount: { $size: { $ifNull: ["$followers", []] } },  // Convert undefined/null to an empty array
+          followingCount: { $size: { $ifNull: ["$following", []] } }  // Convert undefined/null to an empty array
+        }
+      },
+      {
+        $match: {
+          _id: { $eq: new mongoose.Types.ObjectId(userId) }
+        }
+      },
+      {
+        $project: {
+          _id: 0,
+          followersCount: 1,
+          followingCount: 1,
+          articleCount: 1 
+        }
+      }
+    ]);
+
+    if (!userStats || userStats.length === 0) {
+      sendErrorResponse(res, 404, ResponseMessage.USER_NOT_FOUND)
+    }
+    sendResponse(res, 200, ResponseMessage.USER_STATS_LISTED, userStats[0])
 
   } catch (error) {
     const err = error as Error;

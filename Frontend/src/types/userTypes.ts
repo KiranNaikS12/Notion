@@ -13,3 +13,14 @@ export interface LoginFormValues {
     email: string;
     password: string;
 }
+
+export interface IFollowing {
+    user: string;
+    _id: string
+}
+
+export interface UserStats {
+    articleCount: number;
+    followersCount: number;
+    followingCount: number;
+}

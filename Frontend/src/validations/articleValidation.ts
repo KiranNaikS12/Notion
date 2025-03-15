@@ -6,5 +6,5 @@ export const articleFormValidation = Yup.object({
       .min(3, 'Title must be at least have 3 characters'),
     category: Yup.string()
        .required('Category is Required')
-
+    
 })

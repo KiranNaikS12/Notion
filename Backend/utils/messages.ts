@@ -13,5 +13,8 @@ export const ResponseMessage = {
     ARTICLE_NOT_FOUND:'Article Not Found',
     ARTICLE_CREATED_SUCCESSFULLY:'Article created successfull',
     ARTICLE_UPDATED_SUCCESSFULLY:'Article Updated Successfully',
-    USER_LISTED: 'USER LISTED SUCCESSFULLY'
+    USER_LISTED: 'USER LISTED SUCCESSFULLY',
+    LOCAL_USER_NOT_FOUND: 'Local User Not Found',
+    REMOTE_USER_NOT_FOUND: 'Remote User Not Found',
+    USER_STATS_LISTED: 'User Stats Listed Successfully'
 }

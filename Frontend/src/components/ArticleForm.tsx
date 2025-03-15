@@ -76,9 +76,17 @@ const ArticleForm: React.FC = () => {
     };
 
     //Handle article submission
-    const handleSubmit = async ( values: FormValues, { setSubmitting, resetForm: formikResetForm }: FormikHelpers<FormValues>) => {
+    const handleSubmit = async ( values: FormValues, { setSubmitting, resetForm: formikResetForm, validateForm }: FormikHelpers<FormValues>) => {
+        console.log('inside handle submit')
         try {
             setIsSubmitting(true);
+            
+            const errors = await validateForm(values);
+            console.log('error', Object.keys(errors))
+
+            if(Object.keys(errors).length > 0) {
+                toast.error("Please fill out all the fields")
+            }
 
             const editorContent = editor?.getJSON();
             if (!editorContent) {
@@ -205,7 +213,7 @@ const ArticleForm: React.FC = () => {
                         }}
                         validationSchema={articleFormValidation}
                         validateOnMount={true}
-                        validateOnChange={false}
+                        validateOnChange={true}
                         validateOnBlur={true} 
                         onSubmit={handleSubmit}
                     >
@@ -231,7 +239,12 @@ const ArticleForm: React.FC = () => {
 
                                     {/* Select Category */}
                                     <div className="flex flex-col space-y-2">
-                                        <label htmlFor="category" className="text-gray-500" >Article Category</label>
+                                        <label htmlFor="category" 
+                                            className={`block mb-2 text-sm font-medium  ${errors.category && touched.category
+                                                ? 'text-red-500'
+                                                : 'text-gray-500'
+                                                }`}>{`${errors.category && touched.category ? '*' + errors.category : 'Category'}`}
+                                        </label>
                                         <Field
                                             as="select"
                                             id="category"

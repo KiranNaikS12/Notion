@@ -16,6 +16,7 @@ import { PenIcon } from 'lucide-react'
 import { baseUrl } from '../utils/baseUrl'
 
 
+
 interface AccountInfo {
     firstName: string;
     lastName: string;
@@ -297,9 +298,9 @@ const UserProfile: React.FC = () => {
                                                             type="text"
                                                             id="role"
                                                             name="role"
-                                                            value={userInfo?.role}
+                                                            defaultValue={userInfo?.role}
                                                             className="w-full px-2 py-3 border border-gray-300 rounded-lg bg-gradient-to-b from-gray-50 to-gray-200"
-                                                            placeholder="Last Name"
+                                                            
                                                         />
                                                     )}
                                                 </div>

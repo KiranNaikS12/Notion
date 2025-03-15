@@ -1,3 +1,4 @@
+import mongoose from "mongoose";
 
 export interface IUser {
     firstName: string;
@@ -8,4 +9,10 @@ export interface IUser {
     password: string;
     role: string;
     interested: string[];
+    followers: {
+        user: mongoose.Types.ObjectId
+    }[],
+    following: {
+        user: mongoose.Types.ObjectId
+    }[]
 }

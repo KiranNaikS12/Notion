@@ -7,6 +7,7 @@ import { useNavigate } from 'react-router-dom'
 import Swal from 'sweetalert2'
 import { Button } from '@heroui/react'
 import { baseUrl } from '../utils/baseUrl'
+import ProfileStats from './ProfileStats'
 
 
 const Logout: React.FC = () => {
@@ -53,8 +54,9 @@ const Logout: React.FC = () => {
 
     return (
         <div className='flex flex-col w-full space-y-4'>
+            <ProfileStats/>
             <Button color="danger"  variant="flat" onPress={handleLogout} className='w-40'>Logout</Button>
-            <Button color="danger"  variant="ghost" onPress={handleLogout} className='w-40'>Delete Account</Button>
+            {/* <Button color="danger"  variant="ghost" onPress={handleLogout} className='w-40'>Delete Account</Button> */}
         </div>
     )
 }

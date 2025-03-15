@@ -169,9 +169,9 @@ const ArticleCard: React.FC<ArticleProps> = ({ data, userId, onArticleRemove }) 
                             </div>
                         </div>
                         {isMyArticlePage && (
-                            <div className='flex justify-end space-x-2'>
+                            <div className='flex items-center justify-end space-x-2'>
                                 <Link to = {`/update/${article._id}`} >
-                                <Button color='primary' variant='faded'>UPDATE</Button>
+                                <button className='px-3 py-2 text-sm text-blue-500 border border-blue-200 rounded-lg' >UPDATE</button>
                                 </Link>
                                 <Button
                                     color='danger'
