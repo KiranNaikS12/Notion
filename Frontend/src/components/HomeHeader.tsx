@@ -61,8 +61,8 @@ const HomeHeader: React.FC = () => {
                                     <Link to='/login' className='font-medium text-blue-500'>
                                         Sign In
                                     </Link>
-                                    <Link to='/register'>
-                                        <Button className='text-white bg-button'>Get Started</Button>
+                                    <Link to='/register' className='font-medium text-black'>
+                                        Get Started
                                     </Link>
                                 </div>
                             </>
