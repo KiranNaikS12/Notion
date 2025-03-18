@@ -42,6 +42,8 @@ export const createArticle = async (req:Request, res:Response) : Promise<void> =
 // Fetch Article:
 export const getArticles = async (req: Request, res:Response) : Promise<void> => {
     try {
+
+        console.log('get article')
         const bucketName = process.env.S3_BUCKET_NAME as string;
         const { category, id } = req.params;
 
